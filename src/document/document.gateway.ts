@@ -1,18 +1,25 @@
-import { SubscribeMessage, WebSocketGateway, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway()
-export class DocumentGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  afterInit(server: any) {
-    throw new Error('Method not implemented.');
+export class DocumentGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  afterInit(server: Server) {
+    /* server.path(): ruta del servidor */
+    console.log(`🚀 Server initialized at ${server.path()}`);
   }
-  handleConnection(client: any, ...args: any[]) {
-    throw new Error('Method not implemented.');
+  handleConnection(client: Socket) {
+    /* client.id: para identificar al cliente conectado */
+    console.log(`Client connected: ${client.id}`);
   }
-  handleDisconnect(client: any) {
-    throw new Error('Method not implemented.');
-  }
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
+  handleDisconnect(client: Socket) {
+    /* client.id: para identificar al cliente conectado */
+    console.log(`Client disconnected: ${client.id}`);
   }
 }
