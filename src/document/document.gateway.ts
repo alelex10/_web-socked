@@ -8,11 +8,18 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: 'http://localhost:5173', // Cambia esto al origen de tu cliente
+    // origin: '*', // Permite conexiones desde cualquier origen
+    // methods: ['GET', 'POST'], // Métodos permitidos
+    // allowedHeaders: ['Content-Type'], // Encabezados permitidos
+    // credentials: true, // Permite credenciales
+  },
+})
 export class DocumentGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  
   @WebSocketServer()
   server: Server;
 
@@ -32,6 +39,17 @@ export class DocumentGateway
   @SubscribeMessage('ping')
   handlePing(client: Socket, payload: any): void {
     console.log(`Received ping from client ${client.id}:`, payload);
-    client.emit('pong', { message: 'pong' });
+    /* Respondo a todos los clientes que esten conectados */
+    this.server.emit('pong', {
+      message: 'pong',
+    });
+    /* Respondo solo al cliente que envio el mensaje */
+    // client.emit('pong', { message: 'pong' });
+    /* Respondo a todos los clientes excepto al que envio el mensaje */
+    // client.broadcast.emit('pong', { message: 'pong' });
+    /* Respondo a un cliente especifico */
+    /* this.server.to(client.id).emit('pong', {
+      message: 'pong',
+    }); */
   }
 }
